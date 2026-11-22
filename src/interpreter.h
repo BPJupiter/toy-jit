@@ -20,7 +20,7 @@ struct Interpreter
     u64 pc;
 
     u64 code_block_count;
-    Code_Block *current_block;
+    u64 current_block_index;
     Code_Block *program;
 
 };

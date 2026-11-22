@@ -6,8 +6,8 @@
 internal u64
 vm_load_const(Interpreter *interpreter)
 {
-    u8 index = interpreter->current_block->instructions.str[interpreter->pc];
-    u64 constant = interpreter->current_block->constants.str[index];
+    u8 index = interpreter->program[interpreter->current_block_index].instructions.str[interpreter->pc];
+    u64 constant = interpreter->program[interpreter->current_block_index].constants.str[index];
     interpreter->pc += 1;
     return constant;
 }
@@ -35,7 +35,7 @@ vm_pop(Interpreter *interpreter)
 internal u8
 vm_next_op(Interpreter *interpreter)
 {
-    u8 op = interpreter->current_block->instructions.str[interpreter->pc];
+    u8 op = interpreter->program[interpreter->current_block_index].instructions.str[interpreter->pc];
     interpreter->pc += 1;
     return op;
 }
@@ -45,7 +45,7 @@ vm_jump(Interpreter *interpreter)
 {
     u64 block_index = vm_next_op(interpreter);
     interpreter->pc = 0;
-    interpreter->current_block = &interpreter->program[block_index];
+    interpreter->current_block_index = block_index;
     return (block_index < interpreter->code_block_count);
 }
 
@@ -57,16 +57,15 @@ vm_load_code_blocks(Interpreter *interpreter, Code_Block *code_blocks, u64 code_
 {
     interpreter->program = code_blocks;
     interpreter->code_block_count = code_block_count;
-    interpreter->current_block = &interpreter->program[0];
 }
 
 internal void
 vm_run(Interpreter *interpreter)
 {
     bool32 run = 1;
-    for(;run && interpreter->pc < interpreter->current_block->instructions.size;)
+    for(;run && interpreter->pc < interpreter->program[interpreter->current_block_index].instructions.size;)
     {
-        u8 op = interpreter->current_block->instructions.str[interpreter->pc];
+        u8 op = interpreter->program[interpreter->current_block_index].instructions.str[interpreter->pc];
         interpreter->pc += 1;
         switch(op)
         {
