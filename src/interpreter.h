@@ -13,15 +13,16 @@ struct Code_Block
 typedef struct Interpreter Interpreter;
 struct Interpreter
 {
-    u64 stack[4096];
-    
-    u64 code_block_count;
-    Code_Block *program;
-    
-    u64 current_block_index;
+    Arena *arena;
+    String64 stack;
 
     u64 stack_pos;
     u64 pc;
+
+    u64 code_block_count;
+    Code_Block *current_block;
+    Code_Block *program;
+
 };
 
 ///////////////

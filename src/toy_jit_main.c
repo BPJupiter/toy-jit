@@ -9,6 +9,8 @@
 int
 main(int argc, char **argv)
 {
+    Arena *arena = arena_alloc();
+    
     // 0 is x, 1 is i
     u64 setup_const_data[] = {0};
     u8 setup_code_data[] =
@@ -59,9 +61,12 @@ main(int argc, char **argv)
     };
 
     Interpreter vm = {0};
+    vm.stack.size = 4096;
+    vm.stack.str = push_array(arena, u64, vm.stack.size);
     vm_load_code_blocks(&vm, program, ArrayCount(program));
     vm_run(&vm);
     printf("%I64u\n", vm_top(&vm));
-    
+
+    arena_release(arena);
     return 0;
 }
